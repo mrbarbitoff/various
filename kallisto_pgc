@@ -21,13 +21,13 @@ def optRecognize(argv):
     except:
         print('\nInvalid options. To see usage info, type kallisto_pgc -h\n')
         sys.exit()
-    annotationfile, quantfiles, outfile = None, None, None
+    annotationfile, quantfiles = None, None
     for opt, arg in opts:
         if opt in ('-h', '--help'):
             print('''\n\nTo turn kallisto output into per-gene counts:
 kallisto_pgc -a <file> [arguments]
 -a (--annot) <file> - GTF/GFF file containing annotation of the genome
-[arguments] - kallisto quantification output in TSV format
+[arguments] - (multiple input files supported) kallisto quantification output in TSV format
 =================================
 -h (--help) To show the help message again\n''')
             sys.exit()
@@ -52,24 +52,22 @@ def transcriptsToGenes(annotationfile):
     return tgr
 
 
-def geneCounts(quantfiles, tgr):
+def writeGeneCounts(quantfiles, tgr):
     """Turning transcript-based counts into gene-based counts"""
     for quantfile in quantfiles:
         outfile = quantfile.replace('.tsv', '_per_gene.tsv')
         gene_counts = {}
-        gene_tpms = {}
         with open(quantfile, 'r') as abundances:
             for line in abundances:
                 if line.startswith('target'):
                     continue
                 content = line.split()
                 gene_id = tgr[content[0]]
-                gene_counts[gene_id] = gene_counts.get(gene_id, 0) + float(content[3])
-                gene_tpms[gene_id] = gene_tpms.get(gene_id, 0) + float(content[4])
+                gene_counts[gene_id] = [sum(x) for x in zip(gene_counts.get(gene_id, [0, 0]), [float(y) for y in content[3:5]])]
         with open(outfile, 'w') as out:
             out.write('target_id\test_counts\ttpm\n')
-            for gene_id, count in  gene_counts.items():
-                out.write(gene_id + '\t' + str(count) + '\t' + str(gene_tpms[gene_id]) + '\n')
+            for gene_id, counts in  gene_counts.items():
+                out.write(gene_id + '\t' + str(counts[0]) + '\t' + str(counts[1]) + '\n')
                 
                 
 # Get input options
@@ -78,5 +76,5 @@ if __name__ == "__main__":
 
 print '\n...patient should you be, young padawan...'
 tgr = transcriptsToGenes(annotationfile)
-geneCounts(quantfiles, tgr)
-print 'Done\n'
+writeGeneCounts(quantfiles, tgr)
+print '...done\n'
