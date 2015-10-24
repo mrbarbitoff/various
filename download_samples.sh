@@ -11,8 +11,7 @@ do
     wget $link
 done
 
-awk -F "\t" '{ if (NR > 1)  print $30 }' $SAMPLES > errs.txt
-awk -F "\t" '{ if (NR > 1)  print $1 }' $SAMPLES > samps.txt
-paste errs.txt samps.txt > SAMPLES
-sort -u SAMPLES
-rm errs.txt samps.txt
+awk -F "\t" '{ if (NR > 1)  print $30 }' $SAMPLES > errs
+awk -F "\t" '{ if (NR > 1)  print $1 }' $SAMPLES > samples
+paste errs samples | sort -u > SAMPLES
+rm errs samples
