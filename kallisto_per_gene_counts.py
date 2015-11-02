@@ -47,7 +47,7 @@ def transcriptsToGenes(annotationfile):
                 continue
             if content[2] == 'transcript':
                 transcript_id = content[11][1:len(content[11])-2]
-                gene_id = content[9][1:len(content[11])-2]
+                gene_id = content[17][1:len(content[17])-2]
                 tgr[transcript_id] = gene_id
     return tgr
 
