@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Implementing per gene counts for kallisto output"""
+"""Simple summation over isoforms - testing the math used by RSEM """
 
 __author__ = "Yury Barbitoff"
 __copyright__ = "Copyright 2015, Yury Barbitoff"
