@@ -63,11 +63,11 @@ def writeGeneCounts(quantfiles, tgr):
                     continue
                 content = line.split()
                 gene_id = tgr[content[0]]
-                gene_counts[gene_id] = [sum(x) for x in zip(gene_counts.get(gene_id, [0, 0]), [float(y) for y in content[3:5]])]
+                gene_counts[gene_id] = gene_counts.get(gene_id, 0) + float(content[1])
         with open(outfile, 'w') as out:
             out.write('target_id\test_counts\ttpm\n')
-            for gene_id, counts in  gene_counts.items():
-                out.write(gene_id + '\t' + str(counts[0]) + '\t' + str(counts[1]) + '\n')
+            for gene_id, count in  gene_counts.items():
+                out.write(gene_id + '\t' + str(count) + '\n')
                 
                 
 # Get input options
